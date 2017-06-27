@@ -46,3 +46,22 @@ func TestC(t *testing.T) {
 	//	fmt.Println(b.Src())
 	//	fmt.Println(b.ChildList())
 }
+
+func TestD(t *testing.T) {
+	f := NewWalk("wjs_app/controllers")
+
+	rui := f.Child("apim.ReqUserId")
+	ffmt.Puts(rui.Name())
+	ffmt.Puts(rui.ChildList())
+
+	for _, v := range rui.ChildList() {
+		b := rui.Child(v)
+
+		t := b.Type()
+		ffmt.P(b.Name(), rui.Child(t.Name()).Type().Value())
+	}
+
+	//ffmt.P(r.Index(0).Value())
+	//	fmt.Println(b.Src())
+	//	fmt.Println(b.ChildList())
+}

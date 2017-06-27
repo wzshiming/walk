@@ -147,6 +147,27 @@ func (w *Node) Doc() *ast.CommentGroup {
 	case *ast.FuncDecl:
 		return b.Doc
 	}
+
+	return &ast.CommentGroup{}
+}
+
+func (w *Node) Comment() *ast.CommentGroup {
+	if w == nil {
+		return nil
+	}
+	tar := w.Value()
+	switch b := tar.(type) {
+	case *ast.Field:
+		return b.Comment
+	case *ast.ImportSpec:
+		return b.Comment
+	case *ast.ValueSpec:
+		return b.Comment
+	case *ast.TypeSpec:
+		return b.Comment
+
+	}
+
 	return &ast.CommentGroup{}
 }
 
@@ -168,6 +189,10 @@ func (w *Node) Pos() token.Position {
 		return token.Position{}
 	}
 	return w.p.fileSet.Position(n.Pos())
+}
+
+func (w *Node) Tars() []interface{} {
+	return w.tar
 }
 
 func (w *Node) Ident() interface{} {
