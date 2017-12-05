@@ -14,11 +14,23 @@ import (
 	"golang.org/x/tools/imports"
 )
 
+var FilterSuffix []string
+
+func Filter(file string) bool {
+	for _, v := range FilterSuffix {
+		if strings.HasSuffix(file, v) {
+			return false
+		}
+	}
+	return true
+}
+
 // 源码历遍 用于找到自己想要的部分
 type walk struct {
-	fileSet *token.FileSet
-	mode    parser.Mode
-	root    *Node
+	fileSet      *token.FileSet
+	mode         parser.Mode
+	root         *Node
+	filterSuffix []string
 
 	gopath []string
 	pkgs   map[string]map[string]*ast.Package
@@ -84,8 +96,8 @@ func (w *walk) open(path string) (pkg map[string]*ast.Package, first error) {
 			return !fi.IsDir() &&
 				len(name) > 0 &&
 				name[0] != '.' &&
-				strings.HasSuffix(name, ".go") //&&
-			//!strings.HasSuffix(name, "_test.go")
+				strings.HasSuffix(name, ".go") &&
+				Filter(name)
 		}, w.mode)
 		if err != nil {
 			if first == nil {

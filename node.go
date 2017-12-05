@@ -12,14 +12,14 @@ import (
 
 type Node struct {
 	name string
-	p    *walk
+	walk *walk
 	tar  []interface{} // 索引0 是名字 等于的节点  1 是当前节点 接下来的 是到这里检索的路径
 }
 
-func newNode(name string, p *walk, tar []interface{}) *Node {
+func newNode(name string, walk *walk, tar []interface{}) *Node {
 	return &Node{
 		name: name,
-		p:    p,
+		walk: walk,
 		tar:  append([]interface{}{}, tar...),
 	}
 }
@@ -30,12 +30,12 @@ func (w *Node) Save() error {
 		return fmt.Errorf("当前节点无法保存")
 	}
 
-	f := w.p.fileSet.Position(n.Pos())
-	return w.p.save(f.Filename)
+	f := w.walk.fileSet.Position(n.Pos())
+	return w.walk.save(f.Filename)
 }
 
 func (w *Node) in(name string, v ...interface{}) *Node {
-	return newNode(name, w.p, append(v, w.tar[1:]...))
+	return newNode(name, w.walk, append(v, w.tar[1:]...))
 }
 
 // 取变量
@@ -178,7 +178,7 @@ func (w *Node) Src() string {
 		return ""
 	}
 	buf := bytes.NewBuffer(nil)
-	printer.Fprint(buf, w.p.fileSet, n)
+	printer.Fprint(buf, w.walk.fileSet, n)
 	return buf.String()
 }
 
@@ -188,7 +188,7 @@ func (w *Node) Pos() token.Position {
 	if n == nil {
 		return token.Position{}
 	}
-	return w.p.fileSet.Position(n.Pos())
+	return w.walk.fileSet.Position(n.Pos())
 }
 
 func (w *Node) Tars() []interface{} {
@@ -266,7 +266,7 @@ func (w *Node) childForm(name string) *Node {
 
 	// 直接在当前 节点下找
 	if l := w.parse(w.Value(), name); len(l) > 1 {
-		return newNode(name, w.p, l)
+		return newNode(name, w.walk, l)
 	}
 
 	// 在类型下找
@@ -276,14 +276,14 @@ func (w *Node) childForm(name string) *Node {
 
 	// 查找类型的方法
 	if typ := w.Name(); typ != "" {
-		if v := w.p.root.Child(typ + ":" + name); v != nil {
+		if v := w.walk.root.Child(typ + ":" + name); v != nil {
 			return v
 		}
 	}
 
 	// 在根目录下找
-	if w.p.root != w {
-		return w.p.root.childForm(name)
+	if w.walk.root != w {
+		return w.walk.root.childForm(name)
 	}
 	return nil
 }
@@ -440,7 +440,7 @@ func (w *Node) parse(tar interface{}, name string) (r []interface{}) {
 			s = getName(b.Name)
 		}
 		if s == name {
-			pkg, _ := w.p.open(path)
+			pkg, _ := w.walk.open(path)
 			return w.parse(pkg, "")
 		}
 	case *ast.ValueSpec: // var const 里的一条定义
