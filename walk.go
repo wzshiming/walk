@@ -3,6 +3,7 @@ package walk // import "gopkg.in/walk.v1"
 import (
 	"bytes"
 	"go/ast"
+	"go/format"
 	"go/parser"
 	"go/printer"
 	"go/token"
@@ -10,8 +11,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-
-	"golang.org/x/tools/imports"
 )
 
 var FilterSuffix []string
@@ -55,14 +54,7 @@ func (w *walk) save(file string) error {
 	if err != nil {
 		return err
 	}
-	b, err := imports.Process("", buf.Bytes(), &imports.Options{
-		Fragment:   true,
-		AllErrors:  false,
-		Comments:   true,
-		TabIndent:  false,
-		TabWidth:   4,
-		FormatOnly: true,
-	})
+	b, err := format.Source(buf.Bytes())
 	if err != nil {
 		return err
 	}
