@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/wzshiming/ffmt"
+	"gopkg.in/ffmt.v1"
 )
 
 func check(t *testing.T, e error) {
