@@ -1,4 +1,4 @@
-package gowalk
+package walk // import "gopkg.in/walk.v1"
 
 import (
 	"bytes"

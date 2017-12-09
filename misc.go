@@ -1,4 +1,4 @@
-package gowalk
+package walk
 
 import (
 	"go/ast"

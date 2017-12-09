@@ -1,4 +1,4 @@
-package gowalk
+package walk
 
 import (
 	"fmt"
@@ -14,7 +14,7 @@ func check(t *testing.T, e error) {
 }
 
 func TestA(t *testing.T) {
-	f := NewWalk("github.com/wzshiming/gowalk")
+	f := NewWalk("gopkg.in/walk.v1")
 	b := f.Child("walk").Child("fileSet")
 
 	fmt.Println(b.Pos())
@@ -23,7 +23,7 @@ func TestA(t *testing.T) {
 }
 
 func TestB(t *testing.T) {
-	f := NewWalk("github.com/wzshiming/gowalk")
+	f := NewWalk("gopkg.in/walk.v1")
 
 	b := f.Child("walk").Child("save")
 	//r := b.Return()
@@ -36,7 +36,7 @@ func TestB(t *testing.T) {
 var c = ""
 
 func TestC(t *testing.T) {
-	f := NewWalk("github.com/wzshiming/gowalk")
+	f := NewWalk("gopkg.in/walk.v1")
 
 	b := f.Child("TestC").Var("c")
 
