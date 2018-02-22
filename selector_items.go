@@ -9,6 +9,9 @@ import (
 )
 
 type selectorItems struct {
+	child     map[string]interface{}
+	childList []string
+
 	list     []interface{}
 	back     *selectorItems
 	selector *Selector
@@ -19,6 +22,37 @@ func newSelectorItems(selector *Selector, list []interface{}) *selectorItems {
 		list:     list,
 		selector: selector,
 	}
+}
+
+func (s *selectorItems) getChild() {
+	if s.child != nil {
+		return
+	}
+	s.child = GetChild(s.list...)
+	for k, _ := range s.child {
+		s.childList = append(s.childList, k)
+	}
+	return
+}
+func (s *selectorItems) Child(name ...string) *selectorItems {
+	s.getChild()
+	i := []interface{}{}
+	for _, v := range name {
+		d, ok := s.child[v]
+		if ok {
+			i = append(i, d)
+		}
+	}
+	return s.clone(i)
+}
+
+func (s *selectorItems) ChildList() []string {
+	s.getChild()
+	return s.childList
+}
+
+func (s *selectorItems) Interfaces() []interface{} {
+	return s.list
 }
 
 func (s *selectorItems) First() *selectorItems {
